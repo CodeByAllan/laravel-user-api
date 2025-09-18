@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -38,6 +42,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(["error" => 404, "message" => "User not found"], 404);
         }
+        $this->authorize('view', $user);
         return response()->json($user, 200);
     }
 
@@ -53,6 +58,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(["error" => 404, "message" => "User not found"], 404);
         }
+        $this->authorize('update', $user);
         $data = $request->validated();
         $user->update($data);
         return response()->json($user, 200);
@@ -70,6 +76,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(["error" => 404, "message" => "User not found"], 404);
         }
+        $this->authorize('delete', $user);
         $user->delete();
         return response()->json(null, 204);
     }
